@@ -1,23 +1,45 @@
+<div id="hh-panel" style="padding:12px;border:2px solid #444;border-radius:8px;">
+    <h2>HH – Host‑Hub Panel</h2>
+
+    <div id="device-status"></div>
+    <div id="vector-status"></div>
+    <div id="vipiio-status"></div>
+    <div id="run8-status"></div>
+</div>
+
 <script>
 (function () {
 
-    // Gerätedetektion (modern & stabil)
     const ua = navigator.userAgent || navigator.vendor || window.opera;
 
-    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(ua);
+    const isAppleMobile = /iPhone|iPad|iPod/i.test(ua);
+    const isAndroidMobile = /Android/i.test(ua) && /Mobile/i.test(ua);
     const isTablet = /iPad|Tablet|Tab/i.test(ua);
-    const isDesktop = !isMobile && !isTablet;
+    const isDesktop = !isAppleMobile && !isAndroidMobile && !isTablet;
 
-    // RESPO‑Routing
-    if (isMobile || isTablet) {
-        // PX → viPIio
+    const deviceStatus = document.getElementById("device-status");
+    const vectorStatus = document.getElementById("vector-status");
+    const vipiioStatus = document.getElementById("vipiio-status");
+    const run8Status = document.getElementById("run8-status");
+
+    // PX – Mobile → viPIio
+    if (isAppleMobile || isAndroidMobile || isTablet) {
+        deviceStatus.innerHTML = "<b>PX – Mobile erkannt</b>";
+        vipiioStatus.innerHTML = "viPIio: aktiv (Routing → Mobile)";
+        run8Status.innerHTML = "RUN8‑Channel: bereit";
+        vectorStatus.innerHTML = "Vector‑Empfang: möglich";
+
+        // Weiterleitung
         window.location.replace("https://iki1uc.github.io/viPIio/");
         return;
     }
 
-    // PQ & PR bleiben auf HH
+    // PQ / PR – Desktop → HH
     if (isDesktop) {
-        console.log("HH active → PQ/PR bleiben auf Host-Hub");
+        deviceStatus.innerHTML = "<b>PQ/PR – Desktop erkannt</b>";
+        vipiioStatus.innerHTML = "viPIio: deaktiviert (Routing → HH)";
+        run8Status.innerHTML = "RUN8‑Channel: aktiv";
+        vectorStatus.innerHTML = "Vector‑Senden: möglich";
     }
 
 })();
