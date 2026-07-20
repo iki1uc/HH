@@ -9,55 +9,101 @@
   <img src="https://iki1uc.github.io/viPIio/logo.png" style="width:200px; border:2px solid #00e0ff;">
 </div>
 
+<!-- HH – Geräte‑Panel -->
+<div class="block">
+  <h2>HH – Geräte‑Panel</h2>
+
+  <h3>PQ – Laptop</h3>
+  <div id="pq-output">PQ lädt…</div>
+
+  <h3>PX – Apple</h3>
+  <div id="px-output">PX lädt…</div>
+
+  <h3>PR – PC</h3>
+  <div id="pr-output">PR lädt…</div>
+
+  <h3>viPIio</h3>
+  <img id="vipiio-img" style="width:200px; border:2px solid #00e0ff;">
+</div>
+
 <script type="module">
-    import VEC from "./VEC.js";
+import VEC from "./VEC.js";
 
-    const FourULink = {
-        contact() {
-            return {
-                PX: VEC.PX,
-                PQ: VEC.PQ,
-                PR: VEC.PR,
-                channel: VEC.channel,
-                time: Date.now()
-            };
-        },
-        scan() {
-            const c = this.contact();
-            return {
-                devices: {
-                    PX: c.PX.id,
-                    PQ: c.PQ.id,
-                    PR: c.PR.id
-                },
-                channel: c.channel,
-                timestamp: c.time
-            };
-        }
-    };
+function loadDevices() {
 
-    function RUN8() {
-        const scan = FourULink.scan();
-
-        document.getElementById("run8").textContent =
-            "RUN8 aktiv\n" +
-            "Channel: " + scan.channel + "\n" +
-            "Geräte erkannt:\n" +
-            "  PX (Apple):  " + scan.devices.PX + "\n" +
-            "  PQ (Laptop): " + scan.devices.PQ + "\n" +
-            "  PR (PC):     " + scan.devices.PR + "\n" +
-            "Status: System verbunden";
+    // PQ – Laptop (Bild)
+    if (VEC.PQ.image) {
+        document.getElementById("pq-output").innerHTML =
+            `<img src="${VEC.PQ.image}" style="width:200px;">`;
+    } else {
+        document.getElementById("pq-output").textContent = "PQ: kein Bild";
     }
 
-    RUN8();
+    // PX – Apple (Status)
+    document.getElementById("px-output").textContent =
+        "PX Status: " + JSON.stringify(VEC.PX, null, 2);
 
-    document.getElementById("testBtn").onclick = () => {
-        const packet = VEC.send("PQ-LAPTOP", "PX-APPLE", "Hallo Apple");
-        const result = VEC.recv(packet);
+    // PR – PC (Text)
+    document.getElementById("pr-output").textContent =
+        "PR Text: " + (VEC.PR.text || "kein Text");
 
-        document.getElementById("run8").textContent =
-            "RUN8 aktiv\n" +
-            "Vector-Test:\n" +
-            JSON.stringify(result, null, 2);
-    };
+    // viPIio – Bild
+    document.getElementById("vipiio-img").src =
+        "https://iki1uc.github.io/viPIio/logo.png";
+}
+
+loadDevices();
+</script>
+
+<script type="module">
+import VEC from "./VEC.js";
+
+const FourULink = {
+    contact() {
+        return {
+            PX: VEC.PX,
+            PQ: VEC.PQ,
+            PR: VEC.PR,
+            channel: VEC.channel,
+            time: Date.now()
+        };
+    },
+    scan() {
+        const c = this.contact();
+        return {
+            devices: {
+                PX: c.PX.id,
+                PQ: c.PQ.id,
+                PR: c.PR.id
+            },
+            channel: c.channel,
+            timestamp: c.time
+        };
+    }
+};
+
+function RUN8() {
+    const scan = FourULink.scan();
+
+    document.getElementById("run8").textContent =
+        "RUN8 aktiv\n" +
+        "Channel: " + scan.channel + "\n" +
+        "Geräte erkannt:\n" +
+        "  PX (Apple):  " + scan.devices.PX + "\n" +
+        "  PQ (Laptop): " + scan.devices.PQ + "\n" +
+        "  PR (PC):     " + scan.devices.PR + "\n" +
+        "Status: System verbunden";
+}
+
+RUN8();
+
+document.getElementById("testBtn").onclick = () => {
+    const packet = VEC.send("PQ-LAPTOP", "PX-APPLE", "Hallo Apple");
+    const result = VEC.recv(packet);
+
+    document.getElementById("run8").textContent =
+        "RUN8 aktiv\n" +
+        "Vector-Test:\n" +
+        JSON.stringify(result, null, 2);
+};
 </script>
