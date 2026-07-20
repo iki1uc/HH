@@ -16,23 +16,10 @@ h1 { color:#6cf; }
 }
 </style>
 
-<!-- SYSTEM MODULES LADEN -->
-<script src="VEC.js"></script>
-<script src="start.vector"></script>
-<script src="scan.language"></script>
-<script src="load.room"></script>
-<script src="run.tmp"></script>
-<script src="ORT.scan"></script>
-<script src="ATTACK.RUN"></script>
-<script src="BEN.tmp"></script>
-<script src="C.tmp"></script>
-<script src="DA.tmp"></script>
-<script src="NE.tmp"></script>
-<script src="X.tmp"></script>
-<script src="Z.tmp"></script>
-
-<!-- DEVICE ROUTING -->
-<script src="routing.js"></script>
+<script src="RESPO.core.js"></script>
+<script src="AXI.core.js"></script>
+<script src="TEM.core.js"></script>
+<script src="RUN8.core.js"></script>
 
 </head>
 
@@ -40,60 +27,39 @@ h1 { color:#6cf; }
 
 <h1>HH – Host Hub</h1>
 
-<div id="hh-panel" class="panel">
-    <h2>Geräte‑Status</h2>
-    <div id="hh-device"></div>
-    <div id="hh-route"></div>
-</div>
-
-<div id="pipeline-dashboard" class="panel">
+<div id="pipeline" class="panel">
     <h2>Pipeline‑Status</h2>
-    <div id="pipe-tria"></div>
-    <div id="pipe-respo"></div>
-    <div id="pipe-axi"></div>
-    <div id="pipe-tem"></div>
-    <div id="pipe-run8"></div>
-    <div id="pipe-sym"></div>
-    <div id="pipe-connect"></div>
+    <div id="tri"></div>
+    <div id="respo"></div>
+    <div id="axi"></div>
+    <div id="tem"></div>
+    <div id="run8"></div>
+    <div id="connect"></div>
 </div>
 
 <script>
 (async function () {
-
-    /* ---------------------------------------------------------
-       PIPELINE LADEN
-    --------------------------------------------------------- */
 
     const tria = await fetch("tria.json").then(r => r.json()).catch(() => null);
     const respo = await fetch("respo.json").then(r => r.json()).catch(() => null);
     const axi = await fetch("axi.json").then(r => r.json()).catch(() => null);
     const tem = await fetch("TEM.id.json").then(r => r.json()).catch(() => null);
 
-    const run8Ready = typeof START_VECTOR !== "undefined";
-    const symReady = typeof scanLanguage !== "undefined";
+    const triOK = !!tria;
+    const respoOK = !!respo;
+    const axiOK = !!axi;
+    const temOK = !!tem;
 
-    const connected = tria && respo && axi ? true : false;
+    const run8OK = typeof RUN8 !== "undefined";
 
-    document.getElementById("pipe-tria").innerHTML =
-        `<b>TriAxiom:</b> ${tria ? "geladen" : "fehlt"}`;
+    document.getElementById("tri").innerHTML = `<b>TriAxiom:</b> ${triOK ? "geladen" : "fehlt"}`;
+    document.getElementById("respo").innerHTML = `<b>RESPO:</b> ${respoOK ? "geladen" : "fehlt"}`;
+    document.getElementById("axi").innerHTML = `<b>AXI:</b> ${axiOK ? "geladen" : "fehlt"}`;
+    document.getElementById("tem").innerHTML = `<b>TEM:</b> ${temOK ? "aktiv" : "fehlt"}`;
+    document.getElementById("run8").innerHTML = `<b>RUN8 Kernel:</b> ${run8OK ? "aktiv" : "fehlt"}`;
 
-    document.getElementById("pipe-respo").innerHTML =
-        `<b>RESPO:</b> ${respo ? "geladen" : "fehlt"}`;
-
-    document.getElementById("pipe-axi").innerHTML =
-        `<b>AXI:</b> ${axi ? "geladen" : "fehlt"}`;
-
-    document.getElementById("pipe-tem").innerHTML =
-        `<b>TEM:</b> ${tem ? "Zeit‑Engine aktiv" : "nicht geladen"}`;
-
-    document.getElementById("pipe-run8").innerHTML =
-        `<b>RUN8 Kernel:</b> ${run8Ready ? "aktiv" : "inaktiv"}`;
-
-    document.getElementById("pipe-sym").innerHTML =
-        `<b>SYM Engine:</b> ${symReady ? "aktiv" : "Fehler"}`;
-
-    document.getElementById("pipe-connect").innerHTML =
-        `<b>Pipeline:</b> ${connected ? "VERBUNDEN" : "NICHT VERBUNDEN"}`;
+    const connected = triOK && respoOK && axiOK && temOK && run8OK;
+    document.getElementById("connect").innerHTML = `<b>Pipeline:</b> ${connected ? "VERBUNDEN" : "NICHT VERBUNDEN"}`;
 
 })();
 </script>
