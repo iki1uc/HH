@@ -3,26 +3,26 @@
 
     const ua = navigator.userAgent || navigator.vendor || window.opera;
 
-    // Mobile / PX erkennen
-    const isAppleMobile = /iPhone|iPad|iPod/i.test(ua);
-    const isAndroidMobile = /Android/i.test(ua) && /Mobile/i.test(ua);
-    const isTablet = /iPad|Tablet|Tab/i.test(ua);
+    // PX – echte Mobile/Tablet Erkennung (harte Version)
+    const isPX =
+        /iPhone|iPad|iPod/i.test(ua) ||                     // Apple Mobile
+        (/Android/i.test(ua) && /Mobile/i.test(ua)) ||     // Android Mobile
+        (/Android/i.test(ua) && !/Mobile/i.test(ua)) ||    // Android Tablet
+        /Tablet|Tab/i.test(ua);                            // generische Tablets
 
-    // Desktop / Laptop erkennen
-    const isDesktop = !isAppleMobile && !isAndroidMobile && !isTablet;
+    // PQ/PR – Desktop/Laptop
+    const isDesktop = !isPX;
 
-    // Symbol‑Zuweisung
     let deviceType = "";
     let deviceSymbol = "";
     let deviceRoute = "";
 
-    // PX → viPIio (Handy/Tablet)
-    if (isAppleMobile || isAndroidMobile || isTablet) {
+    // PX → viPIio (nur echte Mobile)
+    if (isPX) {
         deviceType = "PX";
         deviceSymbol = "📱";
         deviceRoute = "viPIio";
 
-        // HH darf NICHT auf Handy laufen
         window.location.replace("https://iki1uc.github.io/viPIio/");
         return;
     }
