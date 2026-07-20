@@ -1,45 +1,54 @@
-<div id="hh-panel" style="padding:12px;border:2px solid #444;border-radius:8px;">
-    <h2>HH – Host‑Hub Panel</h2>
-
-    <div id="device-status"></div>
-    <div id="vector-status"></div>
-    <div id="vipiio-status"></div>
-    <div id="run8-status"></div>
-</div>
-
 <script>
 (function () {
 
     const ua = navigator.userAgent || navigator.vendor || window.opera;
 
+    // Mobile / PX erkennen
     const isAppleMobile = /iPhone|iPad|iPod/i.test(ua);
     const isAndroidMobile = /Android/i.test(ua) && /Mobile/i.test(ua);
     const isTablet = /iPad|Tablet|Tab/i.test(ua);
+
+    // Desktop / Laptop erkennen
     const isDesktop = !isAppleMobile && !isAndroidMobile && !isTablet;
 
-    const deviceStatus = document.getElementById("device-status");
-    const vectorStatus = document.getElementById("vector-status");
-    const vipiioStatus = document.getElementById("vipiio-status");
-    const run8Status = document.getElementById("run8-status");
+    // Symbol‑Zuweisung
+    let deviceType = "";
+    let deviceSymbol = "";
+    let deviceRoute = "";
 
-    // PX – Mobile → viPIio
+    // PX → viPIio (Handy/Tablet)
     if (isAppleMobile || isAndroidMobile || isTablet) {
-        deviceStatus.innerHTML = "<b>PX – Mobile erkannt</b>";
-        vipiioStatus.innerHTML = "viPIio: aktiv (Routing → Mobile)";
-        run8Status.innerHTML = "RUN8‑Channel: bereit";
-        vectorStatus.innerHTML = "Vector‑Empfang: möglich";
+        deviceType = "PX";
+        deviceSymbol = "📱";
+        deviceRoute = "viPIio";
 
-        // Weiterleitung
+        // HH darf NICHT auf Handy laufen
         window.location.replace("https://iki1uc.github.io/viPIio/");
         return;
     }
 
-    // PQ / PR – Desktop → HH
-    if (isDesktop) {
-        deviceStatus.innerHTML = "<b>PQ/PR – Desktop erkannt</b>";
-        vipiioStatus.innerHTML = "viPIio: deaktiviert (Routing → HH)";
-        run8Status.innerHTML = "RUN8‑Channel: aktiv";
-        vectorStatus.innerHTML = "Vector‑Senden: möglich";
+    // PQ → Laptop (Desktop + Touch)
+    if (isDesktop && navigator.maxTouchPoints > 0) {
+        deviceType = "PQ";
+        deviceSymbol = "💻";
+        deviceRoute = "HH";
+    }
+
+    // PR → PC (Desktop ohne Touch)
+    if (isDesktop && navigator.maxTouchPoints === 0) {
+        deviceType = "PR";
+        deviceSymbol = "🖥️";
+        deviceRoute = "HH";
+    }
+
+    // HH‑Panel aktualisieren
+    const hhPanel = document.getElementById("hh-panel");
+    if (hhPanel) {
+        hhPanel.innerHTML = `
+            <h2>HH – Host‑Hub Panel</h2>
+            <div><b>Gerät:</b> ${deviceType} ${deviceSymbol}</div>
+            <div><b>Route:</b> ${deviceRoute}</div>
+        `;
     }
 
 })();
