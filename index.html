@@ -1,33 +1,17 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-<meta charset="utf-8">
-<title>RUN8 – VEC.js + 4u.link + PQ/PX/PR</title>
+<!-- RUN8 – Zusatzmodul für HH -->
+<div class="block">
+  <h2>RUN8 – Systemstatus</h2>
+  <pre id="run8">RUN8 wird geladen…</pre>
 
-<style>
-    body { background:#0a0a0a; color:#e0e0e0; font-family:Consolas, monospace; padding:20px; }
-    h1 { color:#00e0ff; }
-    pre { background:#111; padding:15px; border-left:4px solid #00e0ff; }
-    button {
-        background:#00e0ff; border:none; padding:10px 20px;
-        font-family:Consolas; cursor:pointer; margin-top:10px;
-    }
-</style>
-</head>
+  <button id="testBtn">Vector-Test PQ → PX</button>
 
-<body>
-
-<h1>RUN8 – Systemstatus</h1>
-<p>Alle Module verbunden: VEC.js • 4u.link • PQ/PX/PR • viPIio</p>
-
-<pre id="run8">RUN8 wird geladen…</pre>
-
-<button id="testBtn">Vector-Test PQ → PX</button>
+  <h3>viPIio‑Bild</h3>
+  <img src="https://iki1uc.github.io/viPIio/logo.png" style="width:200px; border:2px solid #00e0ff;">
+</div>
 
 <script type="module">
-    import VEC from "./VEC.js";   // WICHTIG: neue Datei
+    import VEC from "./VEC.js";
 
-    // 4u.link – Kontaktkern
     const FourULink = {
         contact() {
             return {
@@ -52,7 +36,6 @@
         }
     };
 
-    // RUN8 – alles zusammenführen
     function RUN8() {
         const scan = FourULink.scan();
 
@@ -68,7 +51,6 @@
 
     RUN8();
 
-    // Vector-Test
     document.getElementById("testBtn").onclick = () => {
         const packet = VEC.send("PQ-LAPTOP", "PX-APPLE", "Hallo Apple");
         const result = VEC.recv(packet);
@@ -79,6 +61,3 @@
             JSON.stringify(result, null, 2);
     };
 </script>
-
-</body>
-</html>
