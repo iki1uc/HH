@@ -1,0 +1,18 @@
+ATTACK.RUN
+RUN-8 → RUN-Startpunkt
+RUN-32 → RUNC-Verstärkung
+RUN-128 → RUNQ-Expansion
+
+DA.tmp → Kandidat
+BEN.tmp → Rohdaten
+C.tmp / X.tmp / Z.tmp → Stationen
+NE.tmp → Neural-Daten
+ORT.scan → ORT-Input
+scan.language → Sprach-Scan
+
+start.vector → Vektor-Aktivierung
+load.room → Daten-Lader
+verify.html → Kandidaten-Analyse
+index.html → Kandidaten-UI
+
+ATTACK.RUN aktiviert DA.tmp für Score, Respo, ORT und HOME.
