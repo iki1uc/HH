@@ -1,76 +1,84 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>RUN8 – VEC.js + 4u.link + PQ/PX/PR</title>
+
+<style>
+    body { background:#0a0a0a; color:#e0e0e0; font-family:Consolas, monospace; padding:20px; }
+    h1 { color:#00e0ff; }
+    pre { background:#111; padding:15px; border-left:4px solid #00e0ff; }
+    button {
+        background:#00e0ff; border:none; padding:10px 20px;
+        font-family:Consolas; cursor:pointer; margin-top:10px;
+    }
+</style>
+</head>
+
+<body>
+
+<h1>RUN8 – Systemstatus</h1>
+<p>Alle Module verbunden: VEC.js • 4u.link • PQ/PX/PR • viPIio</p>
+
+<pre id="run8">RUN8 wird geladen…</pre>
+
+<button id="testBtn">Vector-Test PQ → PX</button>
+
 <script type="module">
-    import VEC from "./VEC.tor";
+    import VEC from "./VEC.js";   <!-- WICHTIG: neue Datei -->
 
-    // HH.respo – Semi‑Admin / Helper
-    const HHrespo = {
-        name: "HH.respo",
-        level: "semi-admin",
-        active: true,
-
-        status() {
+    // 4u.link – Kontaktkern
+    const FourULink = {
+        contact() {
             return {
-                PX: VEC.PX.id,
-                PQ: VEC.PQ.id,
-                PR: VEC.PR.id,
+                PX: VEC.PX,
+                PQ: VEC.PQ,
+                PR: VEC.PR,
                 channel: VEC.channel,
                 time: Date.now()
             };
         },
-
-        save(device) {
-            const data = {
-                id: VEC[device].id,
-                channel: VEC.channel,
-                time: Date.now()
+        scan() {
+            const c = this.contact();
+            return {
+                devices: {
+                    PX: c.PX.id,
+                    PQ: c.PQ.id,
+                    PR: c.PR.id
+                },
+                channel: c.channel,
+                timestamp: c.time
             };
-            localStorage.setItem(device, JSON.stringify(data));
-            return `${device} gespeichert`;
-        },
-
-        load(device) {
-            const data = localStorage.getItem(device);
-            if (!data) return `${device} hat keinen gespeicherten Zustand`;
-            return JSON.parse(data);
-        },
-
-        run(device) {
-            const packet = VEC.send(VEC[device].id, "SYSTEM", "RUN");
-            return VEC.recv(packet);
         }
     };
 
-    // HH.respo Ausgabe
-    window.addEventListener("DOMContentLoaded", () => {
-        const box = document.getElementById("HHrespoBox");
-        const st = HHrespo.status();
+    // RUN8 – alles zusammenführen
+    function RUN8() {
+        const scan = FourULink.scan();
 
-        box.textContent =
-            "HH.respo aktiv\n" +
-            "Admin-Level: " + HHrespo.level + "\n" +
-            "Geräte:\n" +
-            "  PX: " + st.PX + "\n" +
-            "  PQ: " + st.PQ + "\n" +
-            "  PR: " + st.PR + "\n" +
-            "Channel: " + st.channel + "\n" +
-            "Status: bereit";
-    });
-
-    // Trigger verbinden
-    function HHout(text) {
-        document.getElementById("HHrespoBox").textContent = text;
+        document.getElementById("run8").textContent =
+            "RUN8 aktiv\n" +
+            "Channel: " + scan.channel + "\n" +
+            "Geräte erkannt:\n" +
+            "  PX (Apple):  " + scan.devices.PX + "\n" +
+            "  PQ (Laptop): " + scan.devices.PQ + "\n" +
+            "  PR (PC):     " + scan.devices.PR + "\n" +
+            "Status: System verbunden";
     }
 
-    window.addEventListener("DOMContentLoaded", () => {
-        document.getElementById("px-save").onclick = () => HHout(HHrespo.save("PX"));
-        document.getElementById("px-load").onclick = () => HHout(JSON.stringify(HHrespo.load("PX"), null, 2));
-        document.getElementById("px-run").onclick  = () => HHout(JSON.stringify(HHrespo.run("PX"), null, 2));
+    RUN8();
 
-        document.getElementById("pq-save").onclick = () => HHout(HHrespo.save("PQ"));
-        document.getElementById("pq-load").onclick = () => HHout(JSON.stringify(HHrespo.load("PQ"), null, 2));
-        document.getElementById("pq-run").onclick  = () => HHout(JSON.stringify(HHrespo.run("PQ"), null, 2));
+    // Vector-Test
+    document.getElementById("testBtn").onclick = () => {
+        const packet = VEC.send("PQ-LAPTOP", "PX-APPLE", "Hallo Apple");
+        const result = VEC.recv(packet);
 
-        document.getElementById("pr-save").onclick = () => HHout(HHrespo.save("PR"));
-        document.getElementById("pr-load").onclick = () => HHout(JSON.stringify(HHrespo.load("PR"), null, 2));
-        document.getElementById("pr-run").onclick  = () => HHout(JSON.stringify(HHrespo.run("PR"), null, 2));
-    });
+        document.getElementById("run8").textContent =
+            "RUN8 aktiv\n" +
+            "Vector-Test:\n" +
+            JSON.stringify(result, null, 2);
+    };
 </script>
+
+</body>
+</html>
