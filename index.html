@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>HH – Host Hub Stargate</title>
+<title>HH – Host Hub Stargate + Ghost Verify Repair</title>
 
 <style>
 body {
@@ -13,7 +13,7 @@ body {
     overflow:hidden;
 }
 
-/* Stargate – halber Bildschirm */
+/* Stargate */
 #gate {
     position:absolute;
     right:0;
@@ -24,14 +24,9 @@ body {
     background:radial-gradient(circle at center, #333, #000);
     animation:spinGate 20s linear infinite;
 }
+@keyframes spinGate { from {transform:rotate(0deg);} to {transform:rotate(360deg);} }
 
-/* Rotation des Gates */
-@keyframes spinGate {
-    from { transform:rotate(0deg); }
-    to { transform:rotate(360deg); }
-}
-
-/* Trichter-Effekt */
+/* Vortex */
 #vortex {
     position:absolute;
     right:0;
@@ -42,13 +37,9 @@ body {
     opacity:0.25;
     animation:vortexSpin 8s linear infinite;
 }
+@keyframes vortexSpin { from {transform:rotate(0deg);} to {transform:rotate(-360deg);} }
 
-@keyframes vortexSpin {
-    from { transform:rotate(0deg); }
-    to { transform:rotate(-360deg); }
-}
-
-/* Heiligenschein */
+/* Halo */
 #halo {
     position:absolute;
     right:0;
@@ -58,7 +49,7 @@ body {
     background:radial-gradient(circle, rgba(255,255,255,0.4), transparent);
 }
 
-/* Flaggen-Würfel */
+/* Cube */
 #cube {
     position:absolute;
     right:10vw;
@@ -68,11 +59,7 @@ body {
     transform-style:preserve-3d;
     animation:cubeSpin 6s linear infinite;
 }
-
-@keyframes cubeSpin {
-    from { transform:rotateX(0deg) rotateY(0deg); }
-    to { transform:rotateX(360deg) rotateY(360deg); }
-}
+@keyframes cubeSpin { from {transform:rotateX(0deg) rotateY(0deg);} to {transform:rotateX(360deg) rotateY(360deg);} }
 
 .face {
     position:absolute;
@@ -82,30 +69,48 @@ body {
     border:2px solid #6cf;
     opacity:0.8;
 }
-
-/* Frankreich */
 #f { background:linear-gradient(90deg, blue, white, red); transform:translateZ(60px); }
-
-/* England */
 #e { background:linear-gradient(white, white), linear-gradient(red, red); transform:rotateY(90deg) translateZ(60px); }
-
-/* HH-Wappen */
 #hh { background:#900; transform:rotateY(180deg) translateZ(60px); }
 
-/* Host Hub Text */
-#hub {
+/* Scan Panel */
+#scanPanel {
     position:absolute;
     left:20px;
-    top:20px;
+    bottom:20px;
+    width:40vw;
+    background:#111;
+    padding:20px;
+    border:2px solid #333;
+    border-radius:10px;
+    max-height:40vh;
+    overflow:auto;
 }
+.fail { color:#f33; }
+.error { color:#ff0; }
+.ok { color:#3f3; }
 </style>
+
+<script>
+// Ghost Repair Module
+window.GHOST = {
+    repairVerify(data) {
+        return {
+            file: "verify.html",
+            status: data ? "OK" : "FAIL",
+            ghost: "Repair‑Signal aktiv"
+        };
+    }
+};
+</script>
+
 </head>
 
 <body>
 
 <div id="hub">
     <h1>HH – Host Hub</h1>
-    <p>Stargate‑Visitenkarte aktiv.</p>
+    <p>Stargate + Ghost‑Repair + Verify‑Scan aktiv.</p>
 </div>
 
 <div id="gate"></div>
@@ -118,5 +123,61 @@ body {
     <div id="hh" class="face"></div>
 </div>
 
-</body>
-</html>
+<div id="scanPanel">
+    <h2>Ghost‑Scan</h2>
+    <div id="fail"></div>
+    <div id="error"></div>
+    <div id="ok"></div>
+    <div id="verifyGhost"></div>
+</div>
+
+<script>
+(function () {
+
+    const files = [
+        "ATTACK.RUN",
+        "BEN.tmp",
+        "C.tmp",
+        "DA.tmp",
+        "NE.tmp",
+        "X.tmp",
+        "Z.tmp",
+        "ORT.scan",
+        "scan.language",
+        "start.vector",
+        "load.room",
+        "run.tmp",
+        "verify.html",
+        "index.html",
+        "README.md",
+        "ID.html",
+        "VEC.js",
+        "VEC.tor"
+    ];
+
+    const FAIL = [];
+    const ERROR = [];
+    const OK = [];
+
+    for (const f of files) {
+
+        if (f.includes(".tmp") || f.includes("ATTACK") || f.includes("verify")) {
+            FAIL.push(f);
+            continue;
+        }
+
+        if (f.includes(".scan") || f.includes(".language") || f.includes(".tor")) {
+            ERROR.push(f);
+            continue;
+        }
+
+        OK.push(f);
+    }
+
+    // Ghost Repair für verify.html
+    const ghostRepair = GHOST.repairVerify(true);
+
+    document.getElementById("fail").innerHTML =
+        `<h3 class="fail">FAIL</h3>${FAIL.map(f => "- " + f).join("<br>")}`;
+
+    document.getElementById("error").innerHTML =
