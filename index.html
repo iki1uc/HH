@@ -1,21 +1,80 @@
-<!-- ⭐ GEO + Effekt Erweiterung -->
-<div id="geoLayer"></div>
-<div id="effLayer"></div>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>HH – Host Hub Stargate + Ghost L2</title>
 
 <style>
-#geoLayer {
-    position:absolute;
-    left:20px;
-    top:120px;
-    width:40vw;
-    height:40vh;
-    border:2px solid #0f0;
-    border-radius:10px;
-    background:#111;
-    padding:10px;
+body {
+    background:#000;
+    color:#0f0;
+    font-family:Consolas, monospace;
+    padding:20px;
     overflow:hidden;
 }
 
+/* Stargate */
+#gate {
+    position:absolute;
+    right:0;
+    top:0;
+    width:50vw;
+    height:100vh;
+    border-left:4px solid #0ff;
+    background:radial-gradient(circle at center, #444, #000);
+    animation:spinGate 12s linear infinite;
+}
+@keyframes spinGate { from {transform:rotate(0deg);} to {transform:rotate(360deg);} }
+
+#vortex {
+    position:absolute;
+    right:0;
+    top:0;
+    width:50vw;
+    height:100vh;
+    background:conic-gradient(from 180deg, #0ff, #000);
+    opacity:0.35;
+    animation:vortexSpin 5s linear infinite;
+}
+@keyframes vortexSpin { from {transform:rotate(0deg);} to {transform:rotate(-360deg);} }
+
+#halo {
+    position:absolute;
+    right:0;
+    top:8vh;
+    width:50vw;
+    height:12vh;
+    background:radial-gradient(circle, rgba(255,255,255,0.5), transparent);
+}
+
+/* GEO + Effekt Container */
+#geoBox {
+    position:absolute;
+    left:20px;
+    top:80px;
+    width:40vw;
+    height:40vh;
+    background:#111;
+    border:2px solid #0f0;
+    border-radius:10px;
+    overflow:hidden;
+    padding:10px;
+}
+
+#effBox {
+    position:absolute;
+    left:20px;
+    top:420px;
+    width:40vw;
+    height:25vh;
+    background:#111;
+    border:2px solid #0ff;
+    border-radius:10px;
+    overflow:hidden;
+    padding:10px;
+}
+
+/* GEO Doppel-Ring */
 .geoDot {
     width:10px;
     height:10px;
@@ -24,71 +83,46 @@
     position:absolute;
     animation:pulseDot 2s infinite ease-in-out;
 }
-
 @keyframes pulseDot {
     0% { transform:scale(1); opacity:0.4; }
     50% { transform:scale(1.8); opacity:1; }
     100% { transform:scale(1); opacity:0.4; }
 }
 
-#effLayer {
-    position:absolute;
-    left:20px;
-    top:420px;
-    width:40vw;
-    height:25vh;
-    border:2px solid #0ff;
-    border-radius:10px;
-    background:#111;
-    padding:10px;
-    overflow:hidden;
+/* GEO Grid Matrix */
+.gridCell {
+    width:22%;
+    height:22%;
+    background:#222;
+    border:1px solid #0f0;
+    float:left;
+    margin:1%;
+    animation:gridPulse 3s infinite ease-in-out;
+}
+@keyframes gridPulse {
+    0% { opacity:0.3; }
+    50% { opacity:1; }
+    100% { opacity:0.3; }
 }
 
+/* Ghost Points */
+.ghostPoint {
+    width:8px;
+    height:8px;
+    background:#0ff;
+    border-radius:50%;
+    position:absolute;
+    opacity:0.5;
+    animation:ghostMove 4s infinite linear;
+}
+@keyframes ghostMove {
+    0% { transform:translateY(0px); }
+    50% { transform:translateY(-20px); }
+    100% { transform:translateY(0px); }
+}
+
+/* Effekt */
 .effLine {
     width:100%;
     height:4px;
-    background:#0ff;
-    margin:6px 0;
-    animation:waveLine 1.4s infinite linear;
-}
-
-@keyframes waveLine {
-    0% { transform:translateX(-20px); opacity:0.3; }
-    50% { transform:translateX(20px); opacity:1; }
-    100% { transform:translateX(-20px); opacity:0.3; }
-}
-</style>
-
-<script>
-// ⭐ GEO erzeugen
-(function(){
-    const geo = document.getElementById("geoLayer");
-    const count = 48;
-    const radius = 140;
-
-    for(let i=0; i<count; i++){
-        const dot = document.createElement("div");
-        dot.className = "geoDot";
-
-        const angle = (i / count) * Math.PI * 2;
-        const x = Math.cos(angle)*radius + 200;
-        const y = Math.sin(angle)*radius + 120;
-
-        dot.style.left = x+"px";
-        dot.style.top  = y+"px";
-
-        geo.appendChild(dot);
-    }
-})();
-
-// ⭐ Effekt erzeugen
-(function(){
-    const eff = document.getElementById("effLayer");
-    for(let i=0; i<12; i++){
-        const line = document.createElement("div");
-        line.className = "effLine";
-        line.style.animationDelay = (i * 0.1)+"s";
-        eff.appendChild(line);
-    }
-})();
-</script>
+    background
