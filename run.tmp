@@ -1,0 +1,5 @@
+export const RUN = {
+  execute(cmd) {
+    return HYPER_CORE.compute(`RUN:${cmd}`);
+  }
+};
