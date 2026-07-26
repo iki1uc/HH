@@ -1,5 +1,7 @@
-[DA.tmp]
-type = "attack-tmp"
-role = "du"
-prefetch = ["DA→NE","DA→BEN"]
-end.tmp = "DA.end"
+import { HYPER_CORE } from "../HYPER.core.js";
+
+export const DA = {
+  interpret(value) {
+    return HYPER_CORE.compute("DA:" + value);
+  }
+};
