@@ -1,0 +1,5 @@
+export const VECTOR = {
+  set(x, y, z) {
+    return HYPER_CORE.direction(x, y, z);
+  }
+};
