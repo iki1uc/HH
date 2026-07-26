@@ -2,64 +2,138 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>HH – Host Hub Stargate + Ghost L2</title>
+<title>HH · HUMAN/HYPER · CORE</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
 body {
     background:#000;
     color:#0f0;
-    font-family:Consolas, monospace;
+    font-family:monospace;
+    padding:40px;
+}
+h1 {
+    font-size:32px;
+    letter-spacing:4px;
+    color:#6cf;
+}
+.section {
+    margin-top:40px;
+    background:#111;
+    border:1px solid #333;
+    padding:25px;
+    border-radius:8px;
+}
+.title {
+    font-size:20px;
+    color:#9df;
+    margin-bottom:10px;
+}
+pre {
+    background:#000;
     padding:20px;
-    overflow:hidden;
+    border-left:3px solid #6cf;
+    white-space:pre-wrap;
 }
-
-/* Stargate */
-#gate {
-    position:absolute;
-    right:0;
-    top:0;
-    width:50vw;
-    height:100vh;
-    border-left:4px solid #0ff;
-    background:radial-gradient(circle at center, #444, #000);
-    animation:spinGate 12s linear infinite;
+button {
+    padding:10px 20px;
+    background:#6cf;
+    border:none;
+    cursor:pointer;
+    margin-top:10px;
 }
-@keyframes spinGate { from {transform:rotate(0deg);} to {transform:rotate(360deg);} }
-
-#vortex {
-    position:absolute;
-    right:0;
-    top:0;
-    width:50vw;
-    height:100vh;
-    background:conic-gradient(from 180deg, #0ff, #000);
-    opacity:0.35;
-    animation:vortexSpin 5s linear infinite;
-}
-@keyframes vortexSpin { from {transform:rotate(0deg);} to {transform:rotate(-360deg);} }
-
-#halo {
-    position:absolute;
-    right:0;
-    top:8vh;
-    width:50vw;
-    height:12vh;
-    background:radial-gradient(circle, rgba(255,255,255,0.5), transparent);
-}
-
-/* Effekt */
-.effLine {
-    width:100%;
-    height:4px;
-    background:linear-gradient(90deg,#0ff,#000);
+button:hover {
+    background:#9ef;
 }
 </style>
+
+<script type="module">
+import { HYPER_CORE } from "./HYPER.core.js";
+import { VECTOR } from "./start.vector";
+import { RUN } from "./run.tmp";
+import { DA } from "./DA.tmp";
+import { NE } from "./NE.tmp";
+import { X } from "./X.tmp";
+import { Z } from "./Z.tmp";
+import { ORT } from "./ORT.scan";
+import { LANG } from "./scan.language";
+import { ROOM } from "./load.room";
+
+window.addEventListener("load", () => {
+
+    /* -----------------------------------------
+       HYPER CORE INITIALISIEREN
+    ----------------------------------------- */
+    const genesis = HYPER_CORE.init();
+    document.getElementById("coreOut").innerText =
+        JSON.stringify({ genesis }, null, 2);
+
+    /* -----------------------------------------
+       VECTOR SETZEN
+    ----------------------------------------- */
+    const vec = VECTOR.set(3, 9, 1);
+    document.getElementById("vectorOut").innerText =
+        JSON.stringify(vec, null, 2);
+
+    /* -----------------------------------------
+       RUN AUSFÜHREN
+    ----------------------------------------- */
+    const run = RUN.execute("INIT-SEQUENCE");
+    document.getElementById("runOut").innerText =
+        JSON.stringify(run, null, 2);
+
+    /* -----------------------------------------
+       SEMANTIK-MODULE
+    ----------------------------------------- */
+    const da = DA.interpret("Signal");
+    const ne = NE.balance("A", "B");
+    const x  = X.amplify("Impulse");
+    const z  = Z.state("ACTIVE");
+
+    document.getElementById("semOut").innerText =
+        JSON.stringify({ da, ne, x, z }, null, 2);
+
+    /* -----------------------------------------
+       ORT / LANGUAGE / ROOM
+    ----------------------------------------- */
+    const ort = ORT.scan({ x:1, y:2, z:3 });
+    const lang = LANG.parse("Hyperraum aktiviert");
+    const room = ROOM.load("HH-ROOT");
+
+    document.getElementById("metaOut").innerText =
+        JSON.stringify({ ort, lang, room }, null, 2);
+});
+</script>
+
 </head>
 <body>
 
-<div id="gate"></div>
-<div id="vortex"></div>
-<div id="halo"></div>
+<h1>HH · HUMAN/HYPER · CORE</h1>
+
+<div class="section">
+    <div class="title">HYPER‑CORE · Genesis</div>
+    <pre id="coreOut">Initialisiere…</pre>
+</div>
+
+<div class="section">
+    <div class="title">VECTOR.set(x,y,z)</div>
+    <pre id="vectorOut">Setze Vektor…</pre>
+</div>
+
+<div class="section">
+    <div class="title">RUN.execute(cmd)</div>
+    <pre id="runOut">Starte RUN…</pre>
+</div>
+
+<div class="section">
+    <div class="title">Semantik‑Module (DA / NE / X / Z)</div>
+    <pre id="semOut">Lade Semantik…</pre>
+</div>
+
+<div class="section">
+    <div class="title">ORT / LANGUAGE / ROOM</div>
+    <pre id="metaOut">Scanne Meta‑Daten…</pre>
+</div>
 
 </body>
 </html>
