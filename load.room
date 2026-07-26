@@ -1,0 +1,5 @@
+export const ROOM = {
+  load(name) {
+    return HYPER_CORE.store("ROOM", name);
+  }
+};
