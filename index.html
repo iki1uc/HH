@@ -1,114 +1,94 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-<meta charset="UTF-8">
-<title>iki1uc · HH · KI · 128‑Pyramide</title>
+precision mediump float;
 
-<style>
-body { background:#000; color:#0ff; font-family:Consolas; padding:20px; }
-h1 { color:#6cf; }
-pre { background:#111; padding:12px; border:1px solid #333; border-radius:6px; }
-canvas { border:1px solid #333; margin-top:20px; }
-</style>
+uniform float truthAura;
+uniform float mythAura;
+uniform float driftAura;
+uniform float tensorAura;
+uniform float orbitAura;
+uniform float pulseAura;
+uniform float waveAura;
+uniform float fieldAura;
 
-<script type="module">
+uniform vec3 elementAura;
+uniform float time;
 
-import { ORBIT_81_TMP } from "./81.tmp";
-import { ORBIT_9x9 } from "./9×9.tmp";
-import { TMP_RESPO } from "./RESPO.tmp";
-import { iki1uc_KERNEL } from "./iki.js";
+varying vec3 vPos;
 
-import { Pyramid128Mesh } from "./Three.js";
-import { PyramidTensor128 } from "./Pyr.js";
-import { HHOrbit_Pyramid } from "./Orb.js";
-
-function initGL() {
-    const canvas = document.getElementById("hh3d");
-    const gl = canvas.getContext("webgl");
-    gl.clearColor(0, 0, 0, 1);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    return gl;
-}
-
-function renderPyramid(gl, mesh) {
-    const buffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, mesh.vertices, gl.STATIC_DRAW);
-
-    const vs = `
-        attribute vec3 position;
-        uniform float time;
-        void main() {
-            float wobble = sin(time) * 0.1;
-            gl_Position = vec4(position.x + wobble, position.y, position.z, 1.0);
-        }
-    `;
-
-    const fs = `
-        precision mediump float;
-        void main() {
-            gl_FragColor = vec4(0.0, 1.0, 1.0, 1.0);
-        }
-    `;
-
-    const vshader = gl.createShader(gl.VERTEX_SHADER);
-    gl.shaderSource(vshader, vs);
-    gl.compileShader(vshader);
-
-    const fshader = gl.createShader(gl.FRAGMENT_SHADER);
-    gl.shaderSource(fshader, fs);
-    gl.compileShader(fshader);
-
-    const program = gl.createProgram();
-    gl.attachShader(program, vshader);
-    gl.attachShader(program, fshader);
-    gl.linkProgram(program);
-    gl.useProgram(program);
-
-    const pos = gl.getAttribLocation(program, "position");
-    gl.enableVertexAttribArray(pos);
-    gl.vertexAttribPointer(pos, 3, gl.FLOAT, false, 0, 0);
-
-    let t = 0;
-    function loop() {
-        t += 0.02;
-        gl.uniform1f(gl.getUniformLocation(program, "time"), t);
-        gl.clear(gl.COLOR_BUFFER_BIT);
-        gl.drawArrays(gl.TRIANGLES, 0, mesh.vertices.length / 3);
-        requestAnimationFrame(loop);
+/* Fraktale Tiefenstruktur */
+float fractal(vec3 p) {
+    float v = 0.0;
+    float s = 1.0;
+    for (int i = 0; i < 5; i++) {
+        v += abs(sin(p.x * s + p.y * s + p.z * s + time * 0.3));
+        s *= 1.7;
     }
-    loop();
+    return v;
 }
 
-async function start() {
-
-    const gl = initGL();
-    renderPyramid(gl, Pyramid128Mesh);
-
-    const tensor = PyramidTensor128.compute(Pyramid128Mesh);
-    const orbitMap = HHOrbit_Pyramid.map();
-    const kernel = iki1uc_KERNEL.tick();
-
-    const OUT = {
-        orbitMap,
-        tensor,
-        kernel
-    };
-
-    document.getElementById("out").textContent =
-        JSON.stringify(OUT, null, 2);
+/* Chromatische Aura‑Brechung */
+vec3 chromatic(vec3 c, float f) {
+    return vec3(
+        c.r + f * 0.22,
+        c.g + f * 0.08,
+        c.b + f * 0.31
+    );
 }
 
-</script>
-</head>
+/* Organische Wellen */
+float waveField(vec3 p, float w) {
+    return sin(p.x * 3.14 + w * 6.28 + time * 0.8) *
+           cos(p.y * 3.14 + w * 3.14 + time * 0.4);
+}
 
-<body onload="start()">
+/* Wahrheit → Bloom */
+vec3 truthBloom(vec3 base, float t) {
+    return base * (1.0 + t * 1.8);
+}
 
-<h1>iki1uc · HH · KI‑System</h1>
+/* Irrtum → Nebel */
+vec3 mythFog(float m) {
+    return vec3(0.05, 0.05, 0.1) * m;
+}
 
-<pre id="out">Lade…</pre>
+/* Puls → harmonische Schwingung */
+vec3 pulseHarmonics(float p) {
+    return vec3(
+        sin(p * 6.28 + time),
+        sin(p * 3.14 + time * 0.5),
+        sin(p * 9.42 + time * 1.5)
+    ) * 0.3;
+}
 
-<canvas id="hh3d" width="800" height="600"></canvas>
+/* Orbit → Farbrotation */
+vec3 orbitShift(float o) {
+    return vec3(
+        sin(o + time * 0.4),
+        sin(o * 0.5 + time * 0.2),
+        sin(o * 0.25 + time * 0.1)
+    );
+}
 
-</body>
-</html>
+/* Feld → Raumverzerrung */
+vec3 fieldDistortion(float f) {
+    return vec3(f * 0.4, f * 0.2, f * 0.1);
+}
+
+void main() {
+
+    vec3 base = elementAura;
+
+    float wave = waveField(vPos, waveAura);
+    float fract = fractal(vPos * (1.0 + fieldAura));
+
+    vec3 color =
+        truthBloom(base, truthAura) +
+        pulseHarmonics(pulseAura) +
+        orbitShift(orbitAura) +
+        fieldDistortion(fieldAura) +
+        vec3(wave * 0.4 + fract * 0.2) -
+        mythFog(mythAura);
+
+    color = chromatic(color, fieldAura);
+
+    gl_FragColor = vec4(color, 1.0);
+}
