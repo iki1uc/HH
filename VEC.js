@@ -1,49 +1,21 @@
-// VEC.js – Vector Engine für PQ / PX / PR
+export function PyramidMatrix128() {
+  const matrix = [];
 
-const VEC = {
-    channel: "RUN8-CHANNEL",
+  const blocks = [
+    { r: 8, c: 4 },
+    { r: 4, c: 8 },
+    { r: 16, c: 2 },
+    { r: 2, c: 16 }
+  ];
 
-    PX: {
-        id: "PX-APPLE",
-        type: "APPLE",
-        state: "ready"
-    },
-
-    PQ: {
-        id: "PQ-LAPTOP",
-        type: "LAPTOP",
-        state: "ready"
-    },
-
-    PR: {
-        id: "PR-PC",
-        type: "PC",
-        state: "ready"
-    },
-
-    // Paket senden
-    send(from, to, data) {
-        return {
-            from,
-            to,
-            data,
-            time: Date.now(),
-            channel: this.channel,
-            status: "sent"
-        };
-    },
-
-    // Paket empfangen
-    recv(packet) {
-        return {
-            from: packet.from,
-            to: packet.to,
-            data: packet.data,
-            channel: packet.channel,
-            time: packet.time,
-            end: "OK"
-        };
+  blocks.forEach(block => {
+    const side = [];
+    for (let i = 0; i < block.r; i++) {
+      const row = Array(block.c).fill(1);
+      side.push(row);
     }
-};
+    matrix.push(side);
+  });
 
-export default VEC;
+  return matrix;
+}
