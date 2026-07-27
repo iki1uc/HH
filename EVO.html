@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>HH · EVOLUTION · 12 Stufen · 5X</title>
+
+<style>
+body { background:#000; color:#0ff; font-family:Consolas; padding:20px; }
+h1 { color:#6cf; }
+h2 { color:#0f0; margin-top:25px; }
+pre { background:#111; padding:12px; border:1px solid #333; border-radius:6px; }
+.pyramid { display:flex; flex-direction:column; align-items:center; }
+.side { margin:8px; padding:6px; background:#111; border:1px solid #333; }
+</style>
+
+<script type="module">
+import { HH_UNIVERSUM } from "./HH_UNIVERSUM.js";
+
+async function start() {
+    const U = HH_UNIVERSUM.generate();
+    document.getElementById("orbit").textContent =
+        JSON.stringify(U, null, 2);
+}
+</script>
+
+</head>
+
+<body onload="start()">
+
+<h1>HH · EVOLUTION · 12 Stufen · 5X</h1>
+
+<h2>Universum</h2>
+<pre id="orbit">Lade…</pre>
+
+<div class="pyramid">
+  <div class="side">S1 (8×4)</div>
+  <div class="side">S2 (4×8)</div>
+  <div class="side">S3 (16×2)</div>
+  <div class="side">S4 (2×16)</div>
+</div>
+
+</body>
+</html>
