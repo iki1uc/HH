@@ -2,157 +2,53 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>HH · HUMAN/HYPER · VISUAL CORE</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HH · Universum · Orbit · 7D</title>
 
 <style>
-body {
-    background:#000;
-    color:#0f0;
-    font-family:monospace;
-    margin:0;
-    overflow:hidden;
-}
-canvas {
-    position:absolute;
-    top:0;
-    left:0;
-}
-#panel {
-    position:absolute;
-    right:20px;
-    top:20px;
-    width:350px;
-    background:#111;
-    border:1px solid #333;
-    padding:20px;
-    border-radius:8px;
-}
-pre {
-    background:#000;
-    padding:10px;
-    border-left:3px solid #6cf;
-    white-space:pre-wrap;
-}
+body { background:#000; color:#0ff; font-family:Consolas; padding:20px; }
+h1 { color:#6cf; }
+h2 { color:#0f0; margin-top:25px; }
+pre { background:#111; padding:12px; border:1px solid #333; border-radius:6px; }
 </style>
-</head>
-
-<body>
-
-<canvas id="hhCanvas"></canvas>
-
-<div id="panel">
-    <h2>HH · VISUAL CORE</h2>
-    <pre id="coreOut">Init…</pre>
-    <pre id="vectorOut">Vector…</pre>
-    <pre id="runOut">Run…</pre>
-    <pre id="semOut">Semantik…</pre>
-    <pre id="metaOut">Meta…</pre>
-</div>
 
 <script type="module">
-import { HYPER_CORE } from "./HYPER.core.js";
-import { VECTOR } from "./start.vector";
-import { RUN } from "./run.tmp";
-import { DA } from "./DA.tmp";
-import { NE } from "./NE.tmp";
-import { X } from "./X.tmp";
-import { Z } from "./Z.tmp";
-import { ORT } from "./ORT.scan";
-import { LANG } from "./scan.language";
-import { ROOM } from "./load.room";
+import { HH_VEC } from "./VEC.js";
+import { HYPER } from "./HYPER.core.js";
 
-const canvas = document.getElementById("hhCanvas");
-const ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+async function start() {
 
-/* -----------------------------------------
-   1. HYPER CORE INIT
------------------------------------------ */
-const genesis = HYPER_CORE.init();
-document.getElementById("coreOut").innerText =
-    JSON.stringify({ genesis }, null, 2);
+    const HH = {
+        orbit: "HH-ORBIT-7D",
+        axiom: {
+            A1: "Sonne",
+            A2: "HH",
+            A3: "WELT",
+            A4: "ORT",
+            A5: "LAGE",
+            A6: "NC",
+            A7: "RESPO"
+        },
+        sat: "[53.55, 9.99, ORBIT-7]",
+        parallel: "SUN-PARALLEL",
+        level: "4er-Richtigkeit"
+    };
 
-/* -----------------------------------------
-   2. VECTOR
------------------------------------------ */
-const vec = VECTOR.set(3, 9, 1);
-document.getElementById("vectorOut").innerText =
-    JSON.stringify(vec, null, 2);
+    HH.vec = HH_VEC.compute(HH.axiom);
+    HH.hyper = HYPER.activate(HH);
 
-/* -----------------------------------------
-   3. RUN
------------------------------------------ */
-const run = RUN.execute("INIT-SEQUENCE");
-document.getElementById("runOut").innerText =
-    JSON.stringify(run, null, 2);
-
-/* -----------------------------------------
-   4. SEMANTIK
------------------------------------------ */
-const da = DA.interpret("Signal");
-const ne = NE.balance("A", "B");
-const x  = X.amplify("Impulse");
-const z  = Z.state("ACTIVE");
-
-document.getElementById("semOut").innerText =
-    JSON.stringify({ da, ne, x, z }, null, 2);
-
-/* -----------------------------------------
-   5. META
------------------------------------------ */
-const ort = ORT.scan({ x:1, y:2, z:3 });
-const lang = LANG.parse("Hyperraum aktiviert");
-const room = ROOM.load("HH-ROOT");
-
-document.getElementById("metaOut").innerText =
-    JSON.stringify({ ort, lang, room }, null, 2);
-
-/* -----------------------------------------
-   6. VISUALISIERUNG
------------------------------------------ */
-let t = 0;
-
-function loop() {
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-
-    // VECTOR als Pfeil
-    ctx.strokeStyle = "#6cf";
-    ctx.lineWidth = 4;
-    ctx.beginPath();
-    ctx.moveTo(canvas.width/2, canvas.height/2);
-    ctx.lineTo(canvas.width/2 + vec.x*50,
-               canvas.height/2 - vec.y*50);
-    ctx.stroke();
-
-    // RUN Impulse
-    ctx.fillStyle = "#0f0";
-    ctx.beginPath();
-    ctx.arc(
-        canvas.width/2 + Math.sin(t/20)*200,
-        canvas.height/2 + Math.cos(t/20)*200,
-        10, 0, Math.PI*2
-    );
-    ctx.fill();
-
-    // Semantik Heatmap
-    const semVals = [da.output.length, ne.output.length, x.output.length, z.module.length];
-    semVals.forEach((v,i)=>{
-        ctx.fillStyle = `rgb(${v*10},${50+i*40},${100})`;
-        ctx.fillRect(50, 50 + i*60, 40, 40);
-    });
-
-    // ORT Position
-    ctx.fillStyle = "#f0f";
-    ctx.fillRect(ort.x*40 + 100, ort.y*40 + 100, 20, 20);
-
-    t++;
-    requestAnimationFrame(loop);
+    document.getElementById("orbit").textContent =
+        JSON.stringify(HH, null, 2);
 }
-
-loop();
 </script>
+
+</head>
+
+<body onload="start()">
+
+<h1>HH · Universum · Orbit · 7D</h1>
+
+<h2>HH-Universum</h2>
+<pre id="orbit">Lade…</pre>
 
 </body>
 </html>
