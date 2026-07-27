@@ -1,11 +1,4 @@
 export const ORBIT_9x9 = {
-  matrix: Array.from({ length: 9 }, () => Array(9).fill(0)),
-
-  set(i, j, value) {
-    this.matrix[i][j] = value;
-  },
-
-  get(i, j) {
-    return this.matrix[i][j];
-  }
+  matrix: Array.from({length:9},()=>Array(9).fill(0)),
+  set(i,j,v){ this.matrix[i][j]=v; }
 };
