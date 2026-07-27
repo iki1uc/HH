@@ -2,21 +2,17 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>iki1uc · HH · KI · 128‑Pyramide · Orbit · RESPO</title>
+<title>iki1uc · HH · KI · 128‑Pyramide</title>
 
 <style>
 body { background:#000; color:#0ff; font-family:Consolas; padding:20px; }
 h1 { color:#6cf; }
-h2 { color:#0f0; margin-top:25px; }
 pre { background:#111; padding:12px; border:1px solid #333; border-radius:6px; }
 canvas { border:1px solid #333; margin-top:20px; }
 </style>
 
 <script type="module">
 
-/* ————————————————————————————————
-   IMPORTS – ALLE MODULE AUS DEINEM REPO
-——————————————————————————————— */
 import { ORBIT_81_TMP } from "./81.tmp";
 import { ORBIT_9x9 } from "./9×9.tmp";
 import { TMP_RESPO } from "./RESPO.tmp";
@@ -25,26 +21,15 @@ import { iki1uc_KERNEL } from "./iki.js";
 import { Pyramid128Mesh } from "./Three.js";
 import { PyramidTensor128 } from "./Pyr.js";
 import { HHOrbit_Pyramid } from "./Orb.js";
-import { TMP } from "./TMP.js";
 
-import VEC from "./VEC.tor";
-
-/* ————————————————————————————————
-   WebGL Setup
-——————————————————————————————— */
 function initGL() {
     const canvas = document.getElementById("hh3d");
     const gl = canvas.getContext("webgl");
-
     gl.clearColor(0, 0, 0, 1);
     gl.clear(gl.COLOR_BUFFER_BIT);
-
     return gl;
 }
 
-/* ————————————————————————————————
-   128‑Pyramide Render
-——————————————————————————————— */
 function renderPyramid(gl, mesh) {
     const buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
@@ -95,53 +80,19 @@ function renderPyramid(gl, mesh) {
     loop();
 }
 
-/* ————————————————————————————————
-   HH.respo – VEC.raw Integration
-——————————————————————————————— */
-const HHrespo = {
-    name: "HH.respo",
-    level: "semi-admin",
-    active: true,
-
-    status() {
-        return {
-            PX: VEC.PX.id,
-            PQ: VEC.PQ.id,
-            PR: VEC.PR.id,
-            channel: VEC.channel,
-            time: Date.now()
-        };
-    }
-};
-
-/* ————————————————————————————————
-   START
-——————————————————————————————— */
 async function start() {
 
     const gl = initGL();
-
-    /* 128‑Pyramide Render */
     renderPyramid(gl, Pyramid128Mesh);
 
-    /* Tensor‑Modell */
     const tensor = PyramidTensor128.compute(Pyramid128Mesh);
-
-    /* Orbit‑Mapping */
     const orbitMap = HHOrbit_Pyramid.map();
-
-    /* iki1uc KI‑Kernel */
     const kernel = iki1uc_KERNEL.tick();
 
-    /* HH.respo Status */
-    const respoStatus = HHrespo.status();
-
-    /* Ausgabe */
     const OUT = {
         orbitMap,
         tensor,
-        kernel,
-        respoStatus
+        kernel
     };
 
     document.getElementById("out").textContent =
@@ -155,10 +106,8 @@ async function start() {
 
 <h1>iki1uc · HH · KI‑System</h1>
 
-<h2>System‑Ausgabe</h2>
 <pre id="out">Lade…</pre>
 
-<h2>128‑Pyramide · WebGL</h2>
 <canvas id="hh3d" width="800" height="600"></canvas>
 
 </body>
