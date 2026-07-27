@@ -1,0 +1,149 @@
+<div class="pyramid3d">
+  
+  export const Tensor_FIELD_X3 = {
+  compute(x = 1.0) {
+    const L1 = Tensor_FIELD.compute(x);
+    const L2 = Tensor_FIELD.compute(x * x);
+    const L3 = Tensor_FIELD.compute(x * x * x);
+
+    return {
+      L1, L2, L3,
+      fieldX3: {
+        TF1: L1.TF1 + L2.TF1 + L3.TF1,
+        TF2: L1.TF2 + L2.TF2 + L3.TF2,
+        TF3: L1.TF3 + L2.TF3 + L3.TF3,
+        TF4: L1.TF4 + L2.TF4 + L3.TF4
+      }
+    };
+  }
+};
+
+  
+  
+  <div class="face f1">S1</div>
+  
+  export const iki1uc_ENGINE_AUTO_X3 = {
+  tick(config = {}) {
+    const evo1 = iki1uc_ENGINE_VIS.start(config);
+    const evo2 = iki1uc_ENGINE_VIS.start({ ...config, boost: 2 });
+    const evo3 = iki1uc_ENGINE_VIS.start({ ...config, boost: 3 });
+
+    return {
+      evo1, evo2, evo3,
+      autoCore: evo1.core + evo2.core + evo3.core
+    };
+  },
+
+  loop(interval = 1000) {
+    setInterval(() => {
+      console.log(this.tick({}));
+    }, interval);
+  }
+};
+
+  
+  
+  
+  <div class="face f2">S2</div>
+  
+  <canvas id="hh3d" width="800" height="600"></canvas>
+
+  export function HH_UNIVERSUM_WEBGL() {
+  const canvas = document.getElementById("hh3d");
+  const gl = canvas.getContext("webgl");
+
+  gl.clearColor(0.0, 0.0, 0.0, 1.0);
+  gl.clear(gl.COLOR_BUFFER_BIT);
+
+  return {
+    status: "WEBGL-3D-UNIVERSUM-AKTIV",
+    canvas,
+    gl
+  };
+}
+
+  
+  
+  
+  div class="face f3">S3</div>
+  
+attribute vec3 position;
+void main() {
+  gl_Position = vec4(position, 1.0);
+}
+precision mediump float;
+void main() {
+  gl_FragColor = vec4(0.0, 1.0, 1.0, 1.0);
+}
+
+
+<div class="face f4">S4</div>
+
+
+export function Shader128_X3(gl) {
+  const vertices = new Float32Array([
+    // S1
+    -0.5,  0.5, 0.0,
+     0.5,  0.5, 0.0,
+     0.0,  1.0, 0.0,
+
+    // S2
+    -0.7, -0.2, 0.0,
+     0.0,  0.2, 0.0,
+    -0.3,  0.8, 0.0,
+
+    // S3
+     0.7, -0.2, 0.0,
+     0.0,  0.2, 0.0,
+     0.3,  0.8, 0.0,
+
+    // S4
+     0.0, -0.8, 0.0,
+    -0.5, -0.5, 0.0,
+     0.5, -0.5, 0.0
+  ]);
+
+  return vertices;
+}
+export function ShaderTensorInput(gl, tensorField) {
+  const scale = tensorField.fieldX3.TF1 / 1000.0;
+
+  gl.uniform1f(gl.getUniformLocation(program, "scale"), scale);
+}
+export const HH_SIMULATION_3D = {
+  run(gl) {
+    return {
+      universe: HH_UNIVERSUM_3D.generate(),
+      tensorField: Tensor_FIELD_X3.compute(1.0),
+      engine: iki1uc_WEBGL_ENGINE.start(gl)
+    };
+  }
+};
+<script type="module">
+import { HH_SIMULATION_3D } from "./HH_SIMULATION_3D.js";
+
+window.onload = () => {
+  const canvas = document.getElementById("hh3d");
+  const gl = canvas.getContext("webgl");
+  const sim = HH_SIMULATION_3D.run(gl);
+
+  console.log(sim);
+};
+</script>
+export const HH_FULL_ENGINE = {
+  start() {
+    const canvas = document.getElementById("hh3d");
+    const gl = canvas.getContext("webgl");
+
+    const sim = HH_SIMULATION_3D.run(gl);
+    const vertices = Shader128_X3(gl);
+
+    animate(gl, vertices);
+
+    return sim;
+  }
+};
+
+
+
+</div>
