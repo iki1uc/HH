@@ -1,11 +1,5 @@
 export const ORBIT_81_TMP = {
   state: new Array(81).fill(0),
-
-  update(index, value) {
-    this.state[index] = value;
-  },
-
-  get() {
-    return this.state;
-  }
+  update(i,v){ this.state[i]=v; },
+  get(){ return this.state; }
 };
