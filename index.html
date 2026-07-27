@@ -2,84 +2,164 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>HH · Universum · Orbit · 7D · OPtA · TMP_UP</title>
+<title>iki1uc · HH · KI · 128‑Pyramide · Orbit · RESPO</title>
 
 <style>
 body { background:#000; color:#0ff; font-family:Consolas; padding:20px; }
 h1 { color:#6cf; }
 h2 { color:#0f0; margin-top:25px; }
 pre { background:#111; padding:12px; border:1px solid #333; border-radius:6px; }
+canvas { border:1px solid #333; margin-top:20px; }
 </style>
 
 <script type="module">
-import { HHOrbit } from "./EXT.js";        // erweitertes HH-Orbit
-import { TMP_UP } from "./OP.js";          // verstärkter TMP-Operator
-import { OPtA_DYN } from "./DYN.js";       // dynamischer OPtA-Core
-import { PyramidMatrix128 } from "./VEC.js"; // 128-Pyramide Matrix
-import { HH_VEC } from "./HH.VEC.js";      // altes VEC-System
-import { HYPER } from "./HYPER.core.js";   // altes Hyper-System
 
+/* ————————————————————————————————
+   IMPORTS – ALLE MODULE AUS DEINEM REPO
+——————————————————————————————— */
+import { ORBIT_81_TMP } from "./81.tmp";
+import { ORBIT_9x9 } from "./9×9.tmp";
+import { TMP_RESPO } from "./RESPO.tmp";
+import { iki1uc_KERNEL } from "./iki.js";
+
+import { Pyramid128Mesh } from "./Three.js";
+import { PyramidTensor128 } from "./Pyr.js";
+import { HHOrbit_Pyramid } from "./Orb.js";
+import { TMP } from "./TMP.js";
+
+import VEC from "./VEC.tor";
+
+/* ————————————————————————————————
+   WebGL Setup
+——————————————————————————————— */
+function initGL() {
+    const canvas = document.getElementById("hh3d");
+    const gl = canvas.getContext("webgl");
+
+    gl.clearColor(0, 0, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    return gl;
+}
+
+/* ————————————————————————————————
+   128‑Pyramide Render
+——————————————————————————————— */
+function renderPyramid(gl, mesh) {
+    const buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, mesh.vertices, gl.STATIC_DRAW);
+
+    const vs = `
+        attribute vec3 position;
+        uniform float time;
+        void main() {
+            float wobble = sin(time) * 0.1;
+            gl_Position = vec4(position.x + wobble, position.y, position.z, 1.0);
+        }
+    `;
+
+    const fs = `
+        precision mediump float;
+        void main() {
+            gl_FragColor = vec4(0.0, 1.0, 1.0, 1.0);
+        }
+    `;
+
+    const vshader = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(vshader, vs);
+    gl.compileShader(vshader);
+
+    const fshader = gl.createShader(gl.FRAGMENT_SHADER);
+    gl.shaderSource(fshader, fs);
+    gl.compileShader(fshader);
+
+    const program = gl.createProgram();
+    gl.attachShader(program, vshader);
+    gl.attachShader(program, fshader);
+    gl.linkProgram(program);
+    gl.useProgram(program);
+
+    const pos = gl.getAttribLocation(program, "position");
+    gl.enableVertexAttribArray(pos);
+    gl.vertexAttribPointer(pos, 3, gl.FLOAT, false, 0, 0);
+
+    let t = 0;
+    function loop() {
+        t += 0.02;
+        gl.uniform1f(gl.getUniformLocation(program, "time"), t);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.drawArrays(gl.TRIANGLES, 0, mesh.vertices.length / 3);
+        requestAnimationFrame(loop);
+    }
+    loop();
+}
+
+/* ————————————————————————————————
+   HH.respo – VEC.raw Integration
+——————————————————————————————— */
+const HHrespo = {
+    name: "HH.respo",
+    level: "semi-admin",
+    active: true,
+
+    status() {
+        return {
+            PX: VEC.PX.id,
+            PQ: VEC.PQ.id,
+            PR: VEC.PR.id,
+            channel: VEC.channel,
+            time: Date.now()
+        };
+    }
+};
+
+/* ————————————————————————————————
+   START
+——————————————————————————————— */
 async function start() {
 
-    // --- HH-Universum Grunddaten ---
-    const HH = {
-        orbit: "HH-ORBIT-7D",
-        axiom: {
-            A1: "Sonne",
-            A2: "HH",
-            A3: "WELT",
-            A4: "ORT",
-            A5: "LAGE",
-            A6: "NC",
-            A7: "RESPO"
-        },
-        sat: "[53.55, 9.99, ORBIT-7]",
-        parallel: "SUN-PARALLEL",
-        level: "4er-Richtigkeit"
+    const gl = initGL();
+
+    /* 128‑Pyramide Render */
+    renderPyramid(gl, Pyramid128Mesh);
+
+    /* Tensor‑Modell */
+    const tensor = PyramidTensor128.compute(Pyramid128Mesh);
+
+    /* Orbit‑Mapping */
+    const orbitMap = HHOrbit_Pyramid.map();
+
+    /* iki1uc KI‑Kernel */
+    const kernel = iki1uc_KERNEL.tick();
+
+    /* HH.respo Status */
+    const respoStatus = HHrespo.status();
+
+    /* Ausgabe */
+    const OUT = {
+        orbitMap,
+        tensor,
+        kernel,
+        respoStatus
     };
 
-    // --- Altes System ---
-    HH.vec = HH_VEC.compute(HH.axiom);
-    HH.hyper = HYPER.activate(HH);
-
-    // --- Neue 128-Pyramide ---
-    HH.pyramid = PyramidMatrix128({
-        weight: 1.0
-    });
-
-    // --- HH-Orbit erweitertes Mapping ---
-    HH.orbitMap = HHOrbit.map();
-
-    // --- Dynamischer OPtA-Core ---
-    HH.opta = OPtA_DYN.compute({
-        O1: { alpha: 1.2, beta: 0.5, gamma: 1.0, delta: 0.1 },
-        O2: { alpha: 1.0, beta: 0.0, gamma: 1.1, delta: 0.0 },
-        O3: { alpha: 0.9, beta: 0.2, gamma: 1.3, delta: 0.4 },
-        O4: { alpha: 1.5, beta: 0.0, gamma: 1.0, delta: 0.2 }
-    });
-
-    // --- TMP_UP Test ---
-    HH.tmp_test = {
-        S1: TMP_UP(HH.orbitMap.O1, { alpha: 1.2, beta: 0.5 }),
-        S2: TMP_UP(HH.orbitMap.O2, { alpha: 1.0, gamma: 1.1 }),
-        S3: TMP_UP(HH.orbitMap.O3, { alpha: 0.9, delta: 0.4 }),
-        S4: TMP_UP(HH.orbitMap.O4, { alpha: 1.5 })
-    };
-
-    // --- Ausgabe ---
-    document.getElementById("orbit").textContent =
-        JSON.stringify(HH, null, 2);
+    document.getElementById("out").textContent =
+        JSON.stringify(OUT, null, 2);
 }
-</script>
 
+</script>
 </head>
 
 <body onload="start()">
 
-<h1>HH · Universum · Orbit · 7D · OPtA · TMP_UP</h1>
+<h1>iki1uc · HH · KI‑System</h1>
 
-<h2>System-Ausgabe</h2>
-<pre id="orbit">Lade…</pre>
+<h2>System‑Ausgabe</h2>
+<pre id="out">Lade…</pre>
+
+<h2>128‑Pyramide · WebGL</h2>
+<canvas id="hh3d" width="800" height="600"></canvas>
 
 </body>
 </html>
