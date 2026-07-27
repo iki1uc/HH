@@ -1,7 +1,7 @@
 export const TMP_RESPO = {
-  compute(input) {
+  compute(input){
     return {
-      respo: input * 1.618,   // goldener Faktor
+      respo: input * 1.618,
       stability: Math.tanh(input),
       drift: Math.sin(input)
     };
