@@ -2,144 +2,87 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>HH · Wind‑Orbit‑Geo‑Runtime · iki1uc</title>
+<title>HH · Orbit‑Atom‑Core · iki1uc</title>
 
 <style>
-body { background:#000; color:#0f0; font-family:monospace; padding:30px; }
-h1 { color:#0f0; margin-bottom:30px; }
-.panel { background:#111; border:1px solid #333; padding:20px; margin-bottom:25px; border-radius:8px; }
-.title { font-size:20px; color:#6cf; margin-bottom:10px; }
-canvas { border:1px solid #0f0; margin-top:10px; }
-pre { background:#000; border-left:3px solid #6cf; padding:10px; white-space:pre-wrap; }
+body { background:#000; color:#0f0; font-family:Consolas; padding:30px; }
+h1 { color:#6cf; margin-bottom:20px; }
+canvas { background:#111; border:1px solid #0f0; display:block; margin-top:20px; }
 </style>
-
-<script type="module">
-/* HH MODULES */
-import { HH_VEC } from "./HH.VEC.js";
-import { HH_ORBIT } from "./HH.orbit.js";
-import { HVGNH_CORE } from "./HVGNH-Core.js";
-import { HYPER_CORE } from "./HYPER.core.js";
-import { TMP } from "./TMP.js";
-
-/* TEAM MODULES */
-import { TEAM_BUILD } from "../TEAM/TE.js";
-import { TEAM_DASHBOARD } from "../TEAM/TEAM_Dashboard.js";
-import { TEAM_AI_CORE } from "../TEAM/TEAM_AI_Core.js";
-import { TEAM_RUNTIME_MONITOR } from "../TEAM/TEAM_Runtime_Monitor.js";
-import { TEAM_FUSION_SPHERE } from "../TEAM/TEAM_Fusion_Sphere.js";
-import { TEAM_HUB_MATRIX } from "../TEAM/TEAM_HUB_Matrix.js";
-import { TEAM_NC_QUANTUM_NODES } from "../TEAM/TEAM_NC_Quantum_Nodes.js";
-
-/* iki1uc CORE */
-import { NC_QUANTUM } from "../NC/NC_Quantum.js";
-import { PQ_HYPER } from "../PQ/PQ_Hyper.js";
-import { TMP_GHOST } from "../TMP/TMP_Ghost.js";
-import { HUB_AI } from "../HUB/HUB_AI.js";
-import { NET_OVERDRIVE } from "../NET/NET_Overdrive.js";
-
-(async function(){
-
-    /* iki1uc CORE INIT */
-    const nc = NC_QUANTUM();
-    const pq = PQ_HYPER(nc);
-    const tmp = TMP_GHOST(pq);
-    const hub = HUB_AI(nc, pq, tmp);
-    const net = NET_OVERDRIVE(nc, pq, tmp, hub);
-    const respo = { mode:"active", signal:"bright" };
-
-    /* TEAM BUILD */
-    const team = TEAM_BUILD(hub, nc, pq, tmp, net, respo);
-
-    /* HH WIND‑ORBIT‑GEO */
-    const vec = HH_VEC();
-    const orbit = HH_ORBIT();
-    const hyper = HYPER_CORE();
-    const geo = HVGNH_CORE();
-
-    /* RENDER TEXT */
-    document.getElementById("team-dashboard").innerText =
-        JSON.stringify(TEAM_DASHBOARD(team), null, 2);
-
-    document.getElementById("team-ai").innerText =
-        JSON.stringify(TEAM_AI_CORE(team), null, 2);
-
-    document.getElementById("team-runtime").innerText =
-        JSON.stringify(TEAM_RUNTIME_MONITOR(team), null, 2);
-
-    document.getElementById("team-fusion").innerText =
-        JSON.stringify(TEAM_FUSION_SPHERE(team), null, 2);
-
-    document.getElementById("team-hub").innerText =
-        JSON.stringify(TEAM_HUB_MATRIX(team), null, 2);
-
-    document.getElementById("team-nc").innerText =
-        JSON.stringify(TEAM_NC_QUANTUM_NODES(team), null, 2);
-
-    /* WIND‑ORBIT‑GEO CANVAS */
-    const c = document.getElementById("wind");
-    const ctx = c.getContext("2d");
-
-    function renderWind(){
-        ctx.clearRect(0,0,600,200);
-
-        // Wind Vector
-        ctx.strokeStyle="#0f0";
-        ctx.beginPath();
-        ctx.moveTo(20,100);
-        ctx.lineTo(20 + vec.speed*4, 100);
-        ctx.stroke();
-
-        // Orbit
-        ctx.strokeStyle="#6cf";
-        ctx.beginPath();
-        ctx.arc(300,100, orbit.radius, 0, Math.PI*2);
-        ctx.stroke();
-
-        // Hyper Pulse
-        ctx.fillStyle="#f0f";
-        ctx.fillRect(20,180, hyper.pulse/2, 5);
-
-        // Geo Node
-        ctx.fillStyle="#ff0";
-        ctx.fillRect(500, 80, 20, 20);
-    }
-
-    setInterval(renderWind, 120);
-
-})();
-</script>
-
 </head>
 
 <body>
 
-<h1>HH · Wind‑Orbit‑Geo‑Runtime · iki1uc</h1>
+<h1>HH · 360° · Atom‑Orbit</h1>
+<canvas id="hhCanvas" width="600" height="400"></canvas>
 
-<div class="panel">
-    <div class="title">Wind‑Orbit‑Geo‑Whirl</div>
-    <canvas id="wind" width="600" height="200"></canvas>
-</div>
+<script>
+// ------------------------------------------------------
+// HH ORBIT SYSTEM – FINAL VERSION
+// ------------------------------------------------------
 
-<div class="panel">
-    <div class="title">TEAM‑Dashboard</div>
-    <pre id="team-dashboard"></pre>
-</div>
+const c = document.getElementById("hhCanvas");
+const x = c.getContext("2d");
 
-<div class="panel">
-    <div class="title">TEAM‑AI‑Core</div>
-    <pre id="team-ai"></pre>
-</div>
+let t = 0;
 
-<div class="panel">
-    <div class="title">TEAM‑Runtime‑Monitor</div>
-    <pre id="team-runtime"></pre>
-</div>
+// Atom‑Orbit‑Parameter
+const atoms = [
+  { r: 80, speed: 0.03, color: "#0ff" },
+  { r: 120, speed: 0.02, color: "#f0f" },
+  { r: 160, speed: 0.015, color: "#ff0" }
+];
 
-<div class="panel">
-    <div class="title">TEAM‑Fusion‑Sphere</div>
-    <pre id="team-fusion"></pre>
-</div>
+function renderHH(){
+  x.clearRect(0,0,c.width,c.height);
 
-<div class="panel">
-    <div class="title">TEAM‑HUB‑Matrix</div>
-    <pre id="team-hub">
+  const cx = c.width/2;
+  const cy = c.height/2;
+
+  // ------------------------------------------------------
+  // 1. HH ROTATION
+  // ------------------------------------------------------
+  x.save();
+  x.translate(cx, cy);
+  x.rotate(t);
+
+  x.fillStyle = "#6cf";
+  x.font = "bold 120px Consolas";
+  x.textAlign = "center";
+  x.textBaseline = "middle";
+  x.fillText("HH", 0, 0);
+
+  x.restore();
+
+  // ------------------------------------------------------
+  // 2. ATOM‑ORBIT
+  // ------------------------------------------------------
+  atoms.forEach((atom, i)=>{
+    const angle = t * (1 + atom.speed * 20);
+
+    const ax = cx + Math.cos(angle + i) * atom.r;
+    const ay = cy + Math.sin(angle + i) * atom.r;
+
+    x.fillStyle = atom.color;
+    x.beginPath();
+    x.arc(ax, ay, 10, 0, Math.PI*2);
+    x.fill();
+  });
+
+  // ------------------------------------------------------
+  // 3. CENTER CORE
+  // ------------------------------------------------------
+  x.fillStyle = "#0f0";
+  x.beginPath();
+  x.arc(cx, cy, 8, 0, Math.PI*2);
+  x.fill();
+
+  t += 0.01;
+  requestAnimationFrame(renderHH);
+}
+
+renderHH();
+</script>
+
+</body>
+</html>
